@@ -1,0 +1,20 @@
+{
+  "type": "mongodb",
+  "host": "localhost",
+  "port": 27017,
+  "database": "hms",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "src/**/entity/**.entity{.ts,.js}"
+  ],
+  "subscribers": [
+    "src/**/subscriber/**.subscriber{.ts,.js}"
+  ],
+  "migrations": [
+    "src/migration/**.migration{.ts,.js}"
+  ],
+  "cli": {
+      "migrationsDir": "dist/migration"
+    }
+}
