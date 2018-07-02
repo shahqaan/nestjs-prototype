@@ -9,29 +9,33 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
-  findAll(@Res() res) {
-    this.userService.findAll().then((users) => {
+  @UseGuards(AuthGuard('jwt'))
+  async findAll(@Res() res) {
+    try {
+      const users = await this.userService.findAll();
       res.status(HttpStatus.OK).json({data: users});
-    }).catch((err) => {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({err});
-    });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({err: error.message});
+    }
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto, @Res() res) {
-    this.userService.create(createUserDto).then((response) => {
+  async create(@Body() createUserDto: CreateUserDto, @Res() res) {
+    try {
+      await this.userService.create(createUserDto);
       res.status(HttpStatus.CREATED).json({message: 'User is created successfully!'});
-    }).catch((err) => {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({err});
-    });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({err: error.message});
+    }
   }
 
   @Post('login')
-  login(@Body() LoginUserDto: LoginUserDto, @Res() res) {
-    this.userService.login(LoginUserDto).then((response) => {
-      res.status(HttpStatus.FOUND).json(response);
-    }).catch((err) => {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err);
-    });
+  async login(@Body() LoginUserDto: LoginUserDto, @Res() res) {
+    try {
+      const token = await this.userService.login(LoginUserDto);
+      res.status(HttpStatus.FOUND).json({message: 'User login successfully!', data: {token}});
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({err: error.message});
+    }
   }
 }

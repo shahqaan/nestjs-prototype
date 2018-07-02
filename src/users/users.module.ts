@@ -8,7 +8,7 @@ import { HospitalsModule } from '../hospitals/hospitals.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Users]), RolesModule, HospitalsModule, forwardRef(() => AuthModule)],
+  imports: [TypeOrmModule.forFeature([Users]), RolesModule, HospitalsModule, AuthModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

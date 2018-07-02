@@ -11,44 +11,22 @@ export class HospitalsService {
     private readonly hospitalsRepository: Repository<Hospitals>,
   ) {}
 
-  create(hospitalObj) {
-    return new Promise((resolve, reject) => {
-      let hospital = new Hospitals();
-      hospital.name = hospitalObj.name;
+  async create(hospitalObj): Promise<any> {
+    let hospital = new Hospitals();
+    hospital.name = hospitalObj.name;
 
-      validate(hospital).then((errors) => {
-        if (errors.length > 0) {
-          reject(errors[0].constraints);
-        } else {
-          this.hospitalsRepository.save(hospital).then((result) => {
-            resolve(result);
-          }).catch((err) => {
-            reject(err);
-          });
-        }
-      }).catch((err) => {
-        reject(err);
-      });
-    });
+    const errors = await validate(hospital);
+    if (errors.length > 0) {
+      throw new Error(JSON.stringify(errors[0].constraints));
+    }
+    return this.hospitalsRepository.save(hospital);
   }
 
-  findAll() {
-    return new Promise((resolve, reject) => {
-      this.hospitalsRepository.find().then((hospitals) => {
-        resolve(hospitals);
-      }).catch((err) => {
-        reject(err);
-      });
-    });
+  findAll(): Promise<any> {
+    return this.hospitalsRepository.find();
   }
 
-  findOne(hospitalName) {
-    return new Promise((resolve, reject) => {
-      this.hospitalsRepository.find({ where: { name: hospitalName} }).then((hospital) => {
-        resolve(hospital);
-      }).catch((err) => {
-        reject(err);
-      });
-    });
+  findOne(hospitalName): Promise<any> {
+    return this.hospitalsRepository.findOne({ where: { name: hospitalName} });
   }
 }
